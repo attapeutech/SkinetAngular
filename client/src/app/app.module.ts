@@ -1,4 +1,4 @@
-import { ShopModule } from './shop/shop.module';
+import { HomeModule } from './home/home.module';
 import { CoreModule } from './core/core.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -18,7 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserAnimationsModule,
     HttpClientModule,
     CoreModule,
-    ShopModule //don't forget to exports:[ShopComponent] in shop.module.ts
+    HomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
