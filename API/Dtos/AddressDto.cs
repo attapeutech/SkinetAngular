@@ -5,9 +5,9 @@ namespace API.Dtos
     public class AddressDto
     {
         [Required]
-        public string Firstname { get; set; }
+        public string FirstName { get; set; }
         [Required]
-        public string Lastname { get; set; }
+        public string LastName { get; set; }
         [Required]
         public string Street { get; set; }
         [Required]
@@ -15,6 +15,6 @@ namespace API.Dtos
         [Required]
         public string State { get; set; }
         [Required]
-        public string ZipCode { get; set; }
+        public string Zipcode { get; set; }
     }
 }
