@@ -3,25 +3,43 @@ import { HttpClient } from '@angular/common/http';
 import { Basket, BasketItem, BasketTotals } from './../shared/models/basket';
 import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { Product } from '../shared/models/product';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BasketService {
+  createOrder(basket: Basket | null) {
+    throw new Error('Method not implemented.');
+  }
   baseUrl = environment.apiUrl;
   private basketSource = new BehaviorSubject<Basket | null>(null);
   basketSource$ = this.basketSource.asObservable();
   private basketTotalSource = new BehaviorSubject<BasketTotals | null>(null);
   basketTotalSource$ = this.basketTotalSource.asObservable();
-  shipping = 0;
 
   constructor(private http: HttpClient) { }
 
+  createPaymentIntent() {
+    return this.http.post<Basket>(this.baseUrl + 'payments/' + this.getCurrentBasketValue()?.id, {})
+      .pipe(
+        map(basket => {
+          this.basketSource.next(basket);
+        })
+      )
+  }
+
   setShippingPrice(deliveryMethod: DeliveryMethod) {
-    this.shipping = deliveryMethod.price;
-    this.calculateTotals();
+    //Get a basket, this part of Stripe
+    const basket = this.getCurrentBasketValue();
+   
+    //Check to see if we have a basket
+    if(basket) {
+      basket.shippingPrice = deliveryMethod.price;
+      basket.deliveryMethodId = deliveryMethod.id;
+      this.setBasket(basket);
+    }
   }
 
   getBasket(id: string) {
@@ -114,8 +132,9 @@ export class BasketService {
     const basket = this.getCurrentBasketValue();
     if(!basket) return;
     const subtotal = basket.items.reduce((a, b) => (b.price * b.quantity) + a, 0);
-    const total = subtotal + this.shipping;
-    this.basketTotalSource.next({shipping: this.shipping, total, subtotal});
+    const total = subtotal + basket.shippingPrice;
+    //basketTotalSource is an observable
+    this.basketTotalSource.next({shipping: basket.shippingPrice, total, subtotal});
   }
 
   private isProduct(item: Product | BasketItem): item is Product {
