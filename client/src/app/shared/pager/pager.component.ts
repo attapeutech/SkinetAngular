@@ -18,6 +18,7 @@ export class PagerComponent {
   //Create class properties
   @Input() totalCount?: number;
   @Input() pageSize?: number;
+  @Input() pageNumber?: number;
   @Output() pageChanged = new EventEmitter<number>(); //outputting number
 
   onPagerChanged(event: any)

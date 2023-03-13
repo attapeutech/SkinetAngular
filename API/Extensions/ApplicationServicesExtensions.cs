@@ -26,6 +26,10 @@ namespace API.Extensions
                 return ConnectionMultiplexer.Connect(options);
             });
 
+            //Signleton is needs to be ready and available when app started
+            //share across all the requests coming into our API 
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
+
             services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IPaymentService, PaymentService>();
